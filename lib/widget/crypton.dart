@@ -191,6 +191,29 @@ class _CryptonState extends State<Crypton> {
     throw Exception("Invalid algorithm 3");
   }
 
+  Widget _aboutDialogBuilder(BuildContext context) {
+    return AlertDialog(
+        actions: [
+          OutlinedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              "Ok",
+            ),
+          ),
+        ],
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Developed by Andrei Dodu.",
+            ),
+            Text("Version: 0.1.0 (2023)"),
+          ],
+        ));
+  }
+
   Widget _alertDialogBuilder(BuildContext context) {
     return AlertDialog(
         actions: [
@@ -257,7 +280,14 @@ class _CryptonState extends State<Crypton> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.info)),
+          IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: _aboutDialogBuilder,
+                );
+              },
+              icon: const Icon(Icons.info)),
           IconButton(
               onPressed: () {
                 showDialog(context: context, builder: _alertDialogBuilder);
