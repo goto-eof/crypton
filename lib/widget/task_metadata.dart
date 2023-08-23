@@ -1,5 +1,4 @@
 import 'package:crypton/model/task_settings.dart';
-import 'package:crypton/widget/task.dart';
 
 enum TaskStatus {
   idle,

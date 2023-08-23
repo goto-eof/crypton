@@ -1,13 +1,8 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:crypton/model/task_settings.dart' as TS;
 import 'package:crypton/service/encryption_decryption_service.dart';
 import 'package:crypton/widget/new_task_form.dart';
 import 'package:crypton/widget/task.dart';
 import 'package:crypton/widget/task_metadata.dart';
-import 'package:encrypt/encrypt.dart' as ENCRYPT;
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 class Crypton extends StatefulWidget {

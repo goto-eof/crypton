@@ -1,4 +1,3 @@
-import 'package:crypton/model/task_settings.dart';
 import 'package:crypton/widget/task_metadata.dart';
 import 'package:flutter/material.dart';
 
