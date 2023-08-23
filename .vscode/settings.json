@@ -1,0 +1,7 @@
+{
+  "workbench.colorCustomizations": {
+    "editorUnnecessaryCode.border": "#d55151"
+  },
+  "cmake.sourceDirectory": "/home/andrei/_programmazione/_dart/crypton/linux",
+  "cmake.configureOnOpen": true
+}
