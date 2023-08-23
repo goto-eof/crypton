@@ -229,7 +229,7 @@ class _FormNewDialogState extends State<NewTaskForm> {
                       setState(() {
                         _encoded = "${base64Url.encode(
                           utf8.encode(value ?? ''),
-                        )} (${base64Url.encode(utf8.encode(value ?? '')).length})";
+                        )} (${base64Url.encode(utf8.encode(value)).length})";
                       });
                     },
                     controller: _passwordController,
