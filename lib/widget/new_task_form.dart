@@ -5,8 +5,8 @@ import 'package:crypton/model/task_settings.dart' as TS;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-class FormNewTask extends StatefulWidget {
-  const FormNewTask({super.key, required this.runNewTask});
+class NewTaskForm extends StatefulWidget {
+  const NewTaskForm({super.key, required this.runNewTask});
   final Function(TS.TaskSettings) runNewTask;
 
   @override
@@ -15,7 +15,7 @@ class FormNewTask extends StatefulWidget {
   }
 }
 
-class _FormNewDialogState extends State<FormNewTask> {
+class _FormNewDialogState extends State<NewTaskForm> {
   TS.Action _action = TS.Action.encrypt;
   List<PlatformFile> _files = [];
   TS.Algorithm _algorithm = TS.Algorithm.aes;
