@@ -81,83 +81,70 @@ class _FormNewDialogState extends State<NewTaskForm> {
       ],
       content: Column(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Text("Add new encryption/decryption task."),
           const SizedBox(
+            height: 20,
+          ),
+          const Row(
+            children: [
+              Text(
+                "1 - Select an operation:",
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Radio<TS.Action>(
+                value: TS.Action.encrypt,
+                groupValue: _action,
+                onChanged: (TS.Action? value) {
+                  setState(() {
+                    _action = value!;
+                  });
+                },
+              ),
+              const Text("Encrypt"),
+            ],
+          ),
+          Row(
+            children: [
+              Radio<TS.Action>(
+                value: TS.Action.decrypt,
+                groupValue: _action,
+                onChanged: (TS.Action? value) {
+                  setState(() {
+                    _action = value!;
+                  });
+                },
+              ),
+              const Text("Decrypt"),
+            ],
+          ),
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             width: 400,
             child: Column(
               children: [
-                const Text("Action"),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Material(
-                        child: ListTile(
-                          title: const Text('Encrypt'),
-                          leading: Radio<TS.Action>(
-                            value: TS.Action.encrypt,
-                            groupValue: _action,
-                            onChanged: (TS.Action? value) {
-                              setState(() {
-                                _action = value!;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Material(
-                        child: ListTile(
-                          title: const Text('Decrypt'),
-                          leading: Radio<TS.Action>(
-                            value: TS.Action.decrypt,
-                            groupValue: _action,
-                            onChanged: (TS.Action? value) {
-                              setState(() {
-                                _action = value!;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                const Text(
+                  "2 - Choose one or more files that you want to encrypt/decrypt",
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 400,
-            child: Column(
-              children: [
-                const Text("Choose one or more files"),
                 const SizedBox(
                   height: 10,
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        _chooseFile();
-                      },
-                      icon: const Icon(
-                        Icons.file_open,
-                      ),
-                    ),
-                    const Spacer(),
                     Container(
                       height: 100,
-                      width: 300,
+                      width: 380,
                       decoration: BoxDecoration(
                           border: Border.all(
                               width: 1,
@@ -176,8 +163,30 @@ class _FormNewDialogState extends State<NewTaskForm> {
                     ),
                   ],
                 ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    OutlinedButton(
+                      onPressed: () {
+                        _chooseFile();
+                      },
+                      child: const Text("Choose file/s"),
+                    ),
+                  ],
+                )
               ],
             ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          const Row(
+            children: [
+              Text("3 - Choose preferred Algorithm: "),
+            ],
           ),
           const SizedBox(
             height: 10,
@@ -185,12 +194,10 @@ class _FormNewDialogState extends State<NewTaskForm> {
           SizedBox(
             width: 400,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Text("Algorithm: "),
-                const SizedBox(
-                  width: 10,
-                ),
                 DropdownMenu<TS.Algorithm>(
+                  width: 400,
                   initialSelection: TS.Algorithm.aes,
                   onSelected: (TS.Algorithm? value) {
                     // This is called when the user selects an item.
@@ -212,16 +219,20 @@ class _FormNewDialogState extends State<NewTaskForm> {
           const SizedBox(
             height: 10,
           ),
+          const Row(
+            children: [
+              Text("4 - input a Password"),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
           SizedBox(
             width: 400,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("data"),
-                const SizedBox(
-                  width: 20,
-                ),
                 Flexible(
                   child: TextField(
                     controller: _passwordController,

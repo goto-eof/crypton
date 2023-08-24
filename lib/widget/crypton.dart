@@ -185,7 +185,7 @@ class _CryptonState extends State<Crypton> {
             ? Center(
                 child: OutlinedButton(
                   onPressed: _showNewTaskForm,
-                  child: const Text("Add new encryption task"),
+                  child: const Text("Add new encryption / decryption task"),
                 ),
               )
             : ListView(
