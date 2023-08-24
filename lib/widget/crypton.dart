@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:crypton/model/task_settings.dart' as TS;
 import 'package:crypton/service/encryption_decryption_service.dart';
 import 'package:crypton/widget/new_task_form.dart';
@@ -62,7 +64,25 @@ class _CryptonState extends State<Crypton> {
         ));
   }
 
-  Widget _alertDialogBuilder(BuildContext context) {
+  Widget _alertNoTaskDialogBuilder(BuildContext context) {
+    return AlertDialog(
+      actions: [
+        OutlinedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text(
+            "Cancel",
+          ),
+        ),
+      ],
+      content: const Text(
+        "Please first define a task",
+      ),
+    );
+  }
+
+  Widget _alertRunTaskDialogBuilder(BuildContext context) {
     return AlertDialog(
         actions: [
           OutlinedButton(
@@ -75,6 +95,10 @@ class _CryptonState extends State<Crypton> {
           ),
           OutlinedButton(
             onPressed: () async {
+              if (Navigator.of(context).mounted) {
+                Navigator.of(context).pop();
+              }
+
               for (TaskMetadata task in tasks) {
                 setState(() {
                   task.status = TaskStatus.processing;
@@ -82,22 +106,15 @@ class _CryptonState extends State<Crypton> {
                 try {
                   await EncryptionDecryptionService.executeTaskEncryption(
                       task.taskSettings);
-                } on Error catch (err) {
+                } on Error catch (_) {
                   setState(() {
                     task.status = TaskStatus.error;
                   });
-                  if (Navigator.of(context).mounted) {
-                    Navigator.of(context).pop();
-                  }
                   return;
                 }
                 setState(() {
                   task.status = TaskStatus.done;
                 });
-              }
-
-              if (Navigator.of(context).mounted) {
-                Navigator.of(context).pop();
               }
             },
             child: const Text(
@@ -130,18 +147,24 @@ class _CryptonState extends State<Crypton> {
       appBar: AppBar(
         actions: [
           IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: _aboutDialogBuilder,
-                );
-              },
-              icon: const Icon(Icons.info)),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: _aboutDialogBuilder,
+              );
+            },
+            icon: const Icon(Icons.info),
+          ),
           IconButton(
-              onPressed: () {
-                showDialog(context: context, builder: _alertDialogBuilder);
-              },
-              icon: const Icon(Icons.play_arrow)),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: tasks.isEmpty
+                      ? _alertNoTaskDialogBuilder
+                      : _alertRunTaskDialogBuilder);
+            },
+            icon: const Icon(Icons.play_arrow),
+          ),
           IconButton(onPressed: _showNewTaskForm, icon: const Icon(Icons.add)),
           const SizedBox(
             width: 10,
@@ -158,13 +181,20 @@ class _CryptonState extends State<Crypton> {
         ),
       ),
       body: Container(
-        child: ListView(
-          children: [
-            ...tasks.map(
-              (task) => Task(taskMetadata: task, delete: _delete),
-            ),
-          ],
-        ),
+        child: tasks.isEmpty
+            ? Center(
+                child: OutlinedButton(
+                  onPressed: _showNewTaskForm,
+                  child: const Text("Add new encryption task"),
+                ),
+              )
+            : ListView(
+                children: [
+                  ...tasks.map(
+                    (task) => Task(taskMetadata: task, delete: _delete),
+                  ),
+                ],
+              ),
       ),
     );
   }

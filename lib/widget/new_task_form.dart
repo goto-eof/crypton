@@ -18,7 +18,6 @@ class _FormNewDialogState extends State<NewTaskForm> {
   TS.Action _action = TS.Action.encrypt;
   List<PlatformFile> _files = [];
   TS.Algorithm _algorithm = TS.Algorithm.aes;
-  String _encoded = "";
 
   final _passwordController = TextEditingController();
 
@@ -225,13 +224,6 @@ class _FormNewDialogState extends State<NewTaskForm> {
                 ),
                 Flexible(
                   child: TextField(
-                    onChanged: (value) {
-                      setState(() {
-                        _encoded = "${base64Url.encode(
-                          utf8.encode(value ?? ''),
-                        )} (${base64Url.encode(utf8.encode(value)).length})";
-                      });
-                    },
                     controller: _passwordController,
                     obscureText: true,
                     decoration: const InputDecoration(
@@ -247,19 +239,15 @@ class _FormNewDialogState extends State<NewTaskForm> {
           const SizedBox(
             height: 10,
           ),
-          SizedBox(
+          const SizedBox(
             width: 400,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text("data"),
-                const SizedBox(
-                  width: 20,
-                ),
-                Flexible(
+                Expanded(
                   child: Text(
-                    _encoded,
+                    "The author of this software is not responsible for any data loss.",
                   ),
                 ),
               ],
