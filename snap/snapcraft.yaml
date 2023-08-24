@@ -1,7 +1,7 @@
 name: crypton
 version: '0.1.0'
-summary: Encryption/Decryption file application.
-description: Encryption/Decryption file application.
+summary: Encryption, decryption file application.
+description: Encryption, decryption file application.
 
 base: core22
 confinement: strict
