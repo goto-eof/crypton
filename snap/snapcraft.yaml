@@ -15,7 +15,7 @@ apps:
   crypton:
     command: crypton
     extensions: [gnome]
-    plugs: [network, network-bind]
+    plugs: [network, network-bind, home]
 
 parts:
   zenity-integration:
