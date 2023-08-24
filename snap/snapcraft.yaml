@@ -18,12 +18,12 @@ apps:
     plugs: [network, network-bind]
 
 parts:
+  zenity-integration:
+    plugin: nil
+    stage-snaps:
+      - zenity-integration
   crypton:
     build-packages: [curl]
     source: .
     plugin: flutter
     flutter-target: lib/main.dart
-    stage-packages: [zenity]
-layout:
-  /usr/share/zenity:
-    symlink: $SNAP/usr/share/zenity
