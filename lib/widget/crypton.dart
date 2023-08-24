@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:crypton/model/task_settings.dart' as TS;
 import 'package:crypton/service/encryption_decryption_service.dart';
 import 'package:crypton/widget/new_task_form.dart';
