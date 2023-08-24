@@ -23,8 +23,7 @@ parts:
     source: .
     plugin: flutter
     flutter-target: lib/main.dart
-    stage-packages:
-      - zenity
-#layout:
-#  /usr/share/zenity:
-#    symlink: $SNAP/usr/share/zenity
+    stage-packages: [zenity]
+layout:
+  /usr/share/zenity:
+    symlink: $SNAP/usr/share/zenity
