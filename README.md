@@ -11,3 +11,5 @@ Crypton is a File Encryption application. Currently it can encrypt files by usin
 |                   Screenshots                    |
 | :----------------------------------------------: |
 | <img src="screenshots/crypton.png" width="250"/> |
+
+If you found a bug, please [contact me](http://andre-i.eu/#contactme).
