@@ -22,8 +22,18 @@ parts:
     plugin: nil
     stage-packages:
       - zenity
+  qarma-integration:
+    plugin: nil
+    stage-snaps:
+      - qarma/18
+    stage:
+      - usr/bin/qarma
   crypton:
     build-packages: [curl]
     source: .
     plugin: flutter
     flutter-target: lib/main.dart
+
+layout:
+  /usr/share/zenity:
+    symlink: $SNAP/usr/share/zenity
