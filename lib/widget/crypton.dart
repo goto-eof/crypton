@@ -128,7 +128,7 @@ class _CryptonState extends State<Crypton> {
             ),
             Text("Remember that Crypton will override files."),
             Text(
-                " Moreover the developer is not responsible for any data loss produced by the application.")
+                " Moreover the author of this software is not responsible for any data loss produced by this application.")
           ],
         ));
   }
