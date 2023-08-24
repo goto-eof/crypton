@@ -18,6 +18,10 @@ apps:
     plugs: [network, network-bind]
 
 parts:
+  zenity:
+    plugin: nil
+    stage-packages:
+      - zenity
   crypton:
     build-packages: [curl]
     source: .
