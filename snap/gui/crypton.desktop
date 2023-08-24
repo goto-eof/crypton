@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Crypton
+Comment=Encryption/Decryption file application
+Exec=crypton
+Icon=${SNAP}/meta/gui/crypton.png
+Terminal=false
+Type=Application
+Categories=Utility;Office;

@@ -1,0 +1,25 @@
+name: crypton
+version: '0.1.0'
+summary: Encryption/Decryption file application.
+description: Encryption/Decryption file application.
+
+base: core22
+confinement: strict
+grade: stable
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+
+apps:
+  crypton:
+    command: crypton
+    extensions: [gnome]
+    plugs: [network, network-bind]
+
+parts:
+  crypton:
+    build-packages: [curl]
+    source: .
+    plugin: flutter
+    flutter-target: lib/main.dart
