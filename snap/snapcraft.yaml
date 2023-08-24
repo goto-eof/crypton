@@ -22,12 +22,6 @@ parts:
     plugin: nil
     stage-packages:
       - zenity
-  qarma-integration:
-    plugin: nil
-    stage-snaps:
-      - qarma/18
-    stage:
-      - usr/bin/qarma
   crypton:
     build-packages: [curl]
     source: .
