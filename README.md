@@ -8,8 +8,9 @@ Crypton is a File Encryption application. Currently it can encrypt files by usin
 
 # Screenshots
 
-|                   Screenshots                    |
-| :----------------------------------------------: |
-| <img src="screenshots/crypton.png" width="250"/> |
+|                 Screenshots                 |                                             |
+| :-----------------------------------------: | :-----------------------------------------: |
+| <img src="screenshots/s1.png" width="250"/> | <img src="screenshots/s2.png" width="250"/> |
+| <img src="screenshots/s3.png" width="250"/> | <img src="screenshots/s4.png" width="250"/> |
 
 If you found a bug, please [contact me](http://andre-i.eu/#contactme).

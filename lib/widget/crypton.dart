@@ -2,7 +2,7 @@ import 'package:crypton/model/task_settings.dart' as TS;
 import 'package:crypton/service/encryption_decryption_service.dart';
 import 'package:crypton/widget/new_task_form.dart';
 import 'package:crypton/widget/task.dart';
-import 'package:crypton/widget/task_metadata.dart';
+import 'package:crypton/model/task_metadata.dart';
 import 'package:flutter/material.dart';
 
 class Crypton extends StatefulWidget {
@@ -17,6 +17,9 @@ class Crypton extends StatefulWidget {
 class _CryptonState extends State<Crypton> {
   int taskCounter = 0;
   List<TaskMetadata> tasks = [];
+
+  bool _isProcessingStarted = false;
+  bool _forceStop = false;
 
   void _showNewTaskForm() {
     showGeneralDialog(
@@ -57,7 +60,7 @@ class _CryptonState extends State<Crypton> {
             Text(
               "Developed by Andrei Dodu.",
             ),
-            Text("Version: 0.1.0 (2023)"),
+            Text("Version: 0.2.0 (2023)"),
           ],
         ));
   }
@@ -92,29 +95,7 @@ class _CryptonState extends State<Crypton> {
             ),
           ),
           OutlinedButton(
-            onPressed: () async {
-              if (Navigator.of(context).mounted) {
-                Navigator.of(context).pop();
-              }
-
-              for (TaskMetadata task in tasks) {
-                setState(() {
-                  task.status = TaskStatus.processing;
-                });
-                try {
-                  await EncryptionDecryptionService.executeTaskEncryption(
-                      task.taskSettings);
-                } on Error catch (_) {
-                  setState(() {
-                    task.status = TaskStatus.error;
-                  });
-                  return;
-                }
-                setState(() {
-                  task.status = TaskStatus.done;
-                });
-              }
-            },
+            onPressed: _proceedWithProcessingData,
             child: const Text(
               "Proceed",
             ),
@@ -133,10 +114,75 @@ class _CryptonState extends State<Crypton> {
         ));
   }
 
+  void _proceedWithProcessingData() async {
+    setState(() {
+      _execute();
+    });
+
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _execute() async {
+    setState(() {
+      _isProcessingStarted = true;
+    });
+    for (TaskMetadata task in tasks) {
+      if (_forceStop) {
+        setState(() {
+          _forceStop = false;
+          _isProcessingStarted = false;
+        });
+        return;
+      }
+      if (task.status == TaskStatus.done) {
+        continue;
+      }
+
+      setState(() {
+        task.status = TaskStatus.processing;
+      });
+      try {
+        await EncryptionDecryptionService.executeTaskEncryption(
+            task.taskSettings);
+      } on Error catch (_) {
+        setState(() {
+          task.status = TaskStatus.error;
+        });
+        continue;
+      }
+      setState(
+        () {
+          task.taskSettings.files = [...task.taskSettings.files];
+          if (task.taskSettings.files
+              .where((element) => element.errorMessage != null)
+              .isNotEmpty) {
+            task.status = TaskStatus.error;
+          } else {
+            task.status = TaskStatus.done;
+          }
+        },
+      );
+    }
+    setState(() {
+      _isProcessingStarted = false;
+    });
+  }
+
   void _delete(TaskMetadata taskMetadata) {
     setState(() {
       tasks.remove(taskMetadata);
     });
+  }
+
+  void _startProcessing() {
+    setState(() {
+      _forceStop = false;
+    });
+    showDialog(
+        context: context,
+        builder: tasks.isEmpty
+            ? _alertNoTaskDialogBuilder
+            : _alertRunTaskDialogBuilder);
   }
 
   @override
@@ -154,16 +200,13 @@ class _CryptonState extends State<Crypton> {
             icon: const Icon(Icons.info),
           ),
           IconButton(
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: tasks.isEmpty
-                      ? _alertNoTaskDialogBuilder
-                      : _alertRunTaskDialogBuilder);
-            },
-            icon: const Icon(Icons.play_arrow),
-          ),
-          IconButton(onPressed: _showNewTaskForm, icon: const Icon(Icons.add)),
+              onPressed: _isProcessingStarted ? null : _showNewTaskForm,
+              icon: Icon(
+                Icons.add,
+                color: _isProcessingStarted
+                    ? const Color.fromARGB(102, 255, 254, 254)
+                    : null,
+              )),
           const SizedBox(
             width: 10,
           )
@@ -179,6 +222,10 @@ class _CryptonState extends State<Crypton> {
         ),
       ),
       body: Container(
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        decoration: BoxDecoration(
+            border: Border.all(
+                width: 1, color: const Color.fromARGB(255, 0, 0, 0))),
         child: tasks.isEmpty
             ? Center(
                 child: OutlinedButton(
@@ -186,14 +233,78 @@ class _CryptonState extends State<Crypton> {
                   child: const Text("Add new encryption / decryption task"),
                 ),
               )
-            : ListView(
+            : Column(
                 children: [
-                  ...tasks.map(
-                    (task) => Task(taskMetadata: task, delete: _delete),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        ...tasks.map(
+                          (task) => Task(
+                              taskMetadata: task,
+                              delete: _delete,
+                              isProcessingStarted: _isProcessingStarted),
+                        ),
+                      ],
+                    ),
                   ),
+                  Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(30),
+                      decoration: const BoxDecoration(
+                          border: Border(
+                              top: BorderSide(color: Colors.black, width: 1))),
+                      child: _retrieveActionButton()),
                 ],
               ),
       ),
     );
+  }
+
+  Widget _retrieveActionButton() {
+    if (_isProcessingStarted) {
+      return FilledButton(
+        style: const ButtonStyle(
+          foregroundColor: MaterialStatePropertyAll(Colors.white),
+          backgroundColor: MaterialStatePropertyAll(
+            Color.fromARGB(255, 201, 7, 7),
+          ),
+        ),
+        onPressed: _stopProcessing,
+        child: _forceStop
+            ? const Text("Please wait until current job ends")
+            : const Text("Stop processing"),
+      );
+    }
+
+    return FilledButton(
+      style: ButtonStyle(
+        foregroundColor: const MaterialStatePropertyAll(Colors.white),
+        backgroundColor: _isProcessingStarted
+            ? const MaterialStatePropertyAll(
+                Color.fromARGB(
+                  66,
+                  27,
+                  26,
+                  26,
+                ),
+              )
+            : const MaterialStatePropertyAll(
+                Color.fromARGB(
+                  255,
+                  7,
+                  133,
+                  201,
+                ),
+              ),
+      ),
+      onPressed: _isProcessingStarted ? null : _startProcessing,
+      child: const Text("Start processing"),
+    );
+  }
+
+  void _stopProcessing() {
+    setState(() {
+      _forceStop = true;
+    });
   }
 }

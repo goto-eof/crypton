@@ -1,3 +1,4 @@
+import 'package:crypton/model/file_metadata.dart';
 import 'package:file_picker/file_picker.dart';
 
 enum Action { encrypt, decrypt }
@@ -13,7 +14,7 @@ class TaskSettings {
       required this.algorithm,
       required this.password});
   final Action action;
-  final List<PlatformFile> files;
+  List<FileMetadata> files;
   final Algorithm algorithm;
   final String password;
 }

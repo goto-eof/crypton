@@ -1,32 +1,42 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypton/model/file_metadata.dart';
 import 'package:crypton/model/task_settings.dart' as TS;
-import 'package:file_picker/file_picker.dart';
 import 'package:encrypt/encrypt.dart' as ENCRYPT;
 
 class EncryptionDecryptionService {
   static Future<void> executeTaskEncryption(
       TS.TaskSettings taskSettings) async {
-    for (PlatformFile file in taskSettings.files) {
-      await _executeTask(file, taskSettings.action, taskSettings.algorithm,
-          taskSettings.password);
+    for (FileMetadata platformFile in taskSettings.files) {
+      await _executeTask(platformFile, taskSettings.action,
+          taskSettings.algorithm, taskSettings.password);
     }
   }
 
-  static Future<void> _executeTask(PlatformFile file, TS.Action action,
+  static Future<void> _executeTask(FileMetadata fileMetadata, TS.Action action,
       TS.Algorithm algorithm, String password) async {
     if (TS.Action.encrypt == action) {
-      await _encryptFile(file, algorithm, password);
+      try {
+        await _encryptFile(fileMetadata, algorithm, password);
+      } catch (_) {
+        fileMetadata.errorMessage = "[ERR][Invalid password or algorithm?]";
+      }
     } else if (TS.Action.decrypt == action) {
-      await _decryptFile(file, algorithm, password);
+      try {
+        await _decryptFile(fileMetadata, algorithm, password);
+      } catch (_) {
+        fileMetadata.errorMessage = "[ERR][Invalid password or algorithm?]";
+      }
     }
   }
 
-  static Future<void> _encryptFile(file, algorithm, password) async {
+  static Future<void> _encryptFile(
+      FileMetadata file, TS.Algorithm algorithm, String password) async {
     try {
-      File inFile = File(file.path!);
-      File outFile = File("${file.path!}.${calculateFileExtension(algorithm)}");
+      File inFile = File(file.platformFile.path!);
+      File outFile = File(
+          "${file.platformFile.path!}.${calculateFileExtension(algorithm)}");
 
       final dataToEncrypt = await inFile.readAsBytes();
 
@@ -71,10 +81,10 @@ class EncryptionDecryptionService {
   }
 
   static Future<void> _decryptFile(
-      PlatformFile file, TS.Algorithm algorithm, String password) async {
-    File inFile = File(file.path!);
+      FileMetadata file, TS.Algorithm algorithm, String password) async {
+    File inFile = File(file.platformFile.path!);
     RegExp regExp = RegExp(r'.*(?=\.)');
-    File outFile = File(regExp.firstMatch(file.path!)![0]!);
+    File outFile = File(regExp.firstMatch(file.platformFile.path!)![0]!);
 
     final ENCRYPT.Key key;
     if (TS.Algorithm.fernet == algorithm) {

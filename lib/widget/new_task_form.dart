@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crypton/model/file_metadata.dart';
 import 'package:crypton/model/task_settings.dart' as TS;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class NewTaskForm extends StatefulWidget {
 
 class _FormNewDialogState extends State<NewTaskForm> {
   TS.Action _action = TS.Action.encrypt;
-  List<PlatformFile> _files = [];
+  List<FileMetadata> _files = [];
   TS.Algorithm _algorithm = TS.Algorithm.aes;
 
   final _passwordController = TextEditingController();
@@ -28,17 +29,45 @@ class _FormNewDialogState extends State<NewTaskForm> {
     super.dispose();
   }
 
+  Widget _validationFormErrorDialogBuilder(BuildContext context) {
+    return AlertDialog(
+        actions: [
+          OutlinedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              "Ok",
+            ),
+          ),
+        ],
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Please select at least one file in order to proceed with the creation of the task.",
+            ),
+          ],
+        ));
+  }
+
   void _chooseFile() async {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(allowMultiple: true);
     if (result != null) {
       setState(() {
-        _files = result.files;
+        _files = result.files
+            .map((platformFile) => FileMetadata(platformFile: platformFile))
+            .toList();
       });
     }
   }
 
   void _submit() {
+    if (_files.isEmpty) {
+      showDialog(context: context, builder: _validationFormErrorDialogBuilder);
+      return;
+    }
     final String _newPassword =
         _calculatePassword(_algorithm, _passwordController.text);
     widget.runNewTask(TS.TaskSettings(
@@ -100,30 +129,34 @@ class _FormNewDialogState extends State<NewTaskForm> {
           ),
           Row(
             children: [
-              Radio<TS.Action>(
-                value: TS.Action.encrypt,
-                groupValue: _action,
-                onChanged: (TS.Action? value) {
-                  setState(() {
-                    _action = value!;
-                  });
-                },
+              Row(
+                children: [
+                  Radio<TS.Action>(
+                    value: TS.Action.encrypt,
+                    groupValue: _action,
+                    onChanged: (TS.Action? value) {
+                      setState(() {
+                        _action = value!;
+                      });
+                    },
+                  ),
+                  const Text("Encrypt"),
+                ],
               ),
-              const Text("Encrypt"),
-            ],
-          ),
-          Row(
-            children: [
-              Radio<TS.Action>(
-                value: TS.Action.decrypt,
-                groupValue: _action,
-                onChanged: (TS.Action? value) {
-                  setState(() {
-                    _action = value!;
-                  });
-                },
+              Row(
+                children: [
+                  Radio<TS.Action>(
+                    value: TS.Action.decrypt,
+                    groupValue: _action,
+                    onChanged: (TS.Action? value) {
+                      setState(() {
+                        _action = value!;
+                      });
+                    },
+                  ),
+                  const Text("Decrypt"),
+                ],
               ),
-              const Text("Decrypt"),
             ],
           ),
           const SizedBox(
@@ -150,15 +183,28 @@ class _FormNewDialogState extends State<NewTaskForm> {
                               width: 1,
                               color: const Color.fromARGB(255, 0, 0, 0))),
                       child: ListView(
-                        children: [
-                          ..._files
-                              .where((element) => element.path != null)
-                              .map(
-                                (e) => Text(
-                                  e.name,
-                                ),
-                              ),
-                        ],
+                        children: _files.isEmpty
+                            ? [
+                                Container(
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      "No file selected",
+                                      style: TextStyle(
+                                          color: Color.fromARGB(105, 0, 0, 0)),
+                                    ))
+                              ]
+                            : [
+                                ..._files
+                                    .where((element) =>
+                                        element.platformFile.path != null)
+                                    .map(
+                                      (fileMetadata) => Card(
+                                        child: Text(
+                                          fileMetadata.platformFile.name,
+                                        ),
+                                      ),
+                                    ),
+                              ],
                       ),
                     ),
                   ],
