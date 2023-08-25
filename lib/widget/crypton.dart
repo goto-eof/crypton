@@ -193,9 +193,11 @@ class _CryptonState extends State<Crypton> {
           tasks.isNotEmpty
               ? OutlinedButton(
                   onPressed: () {
-                    setState(() {
-                      tasks = [];
-                    });
+                    setState(
+                      () {
+                        tasks = [];
+                      },
+                    );
                   },
                   child: const Text("Clear all tasks"))
               : const SizedBox(),
