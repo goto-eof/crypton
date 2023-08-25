@@ -211,13 +211,17 @@ class _CryptonState extends State<Crypton> {
             width: 10,
           )
         ],
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.lock),
-            SizedBox(
+            Image.asset(
+              "assets/images/icon-48.png",
+              width: 48,
+              height: 48,
+            ),
+            const SizedBox(
               width: 5,
             ),
-            Text("Crypton")
+            const Text("Crypton")
           ],
         ),
       ),
