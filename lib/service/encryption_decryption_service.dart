@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:crypton/model/file_metadata.dart';
 import 'package:crypton/model/task_settings.dart' as TS;
 import 'package:encrypt/encrypt.dart' as ENCRYPT;
+import 'package:path/path.dart' as path;
 
 class EncryptionDecryptionService {
   static Future<void> executeTaskEncryption(
@@ -29,14 +30,16 @@ class EncryptionDecryptionService {
         await _encryptFile(
             fileMetadata, algorithm, password, isDeleteOriginalFiles);
       } catch (_) {
-        fileMetadata.errorMessage = "[ERR][Invalid password or algorithm?]";
+        fileMetadata.message = "Invalid password or algorithm?";
+        fileMetadata.messageType = MessageType.error;
       }
     } else if (TS.Action.decrypt == action) {
       try {
         await _decryptFile(
             fileMetadata, algorithm, password, isDeleteOriginalFiles);
       } catch (_) {
-        fileMetadata.errorMessage = "[ERR][Invalid password or algorithm?]";
+        fileMetadata.message = "Invalid password or algorithm?";
+        fileMetadata.messageType = MessageType.error;
       }
     }
   }
@@ -44,6 +47,15 @@ class EncryptionDecryptionService {
   static Future<void> _encryptFile(FileMetadata file, TS.Algorithm algorithm,
       String password, final bool isDeleteOriginalFiles) async {
     try {
+      final String extension = path.extension(file.platformFile.path!);
+      print(extension);
+      if ('.${algorithm.name}' == extension) {
+        // skipping
+        file.message = "file already encrypted with the same algorithm";
+        file.messageType = MessageType.warning;
+        return;
+      }
+
       File inFile = File(file.platformFile.path!);
       File outFile = File(
           "${file.platformFile.path!}.${calculateFileExtension(algorithm)}");

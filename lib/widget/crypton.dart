@@ -154,7 +154,7 @@ class _CryptonState extends State<Crypton> {
         () {
           task.taskSettings.files = [...task.taskSettings.files];
           if (task.taskSettings.files
-              .where((element) => element.errorMessage != null)
+              .where((element) => element.message != null)
               .isNotEmpty) {
             task.status = TaskStatus.error;
           } else {

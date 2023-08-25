@@ -1,3 +1,4 @@
+import 'package:crypton/model/file_metadata.dart';
 import 'package:crypton/model/task_metadata.dart';
 import 'package:flutter/material.dart';
 
@@ -97,10 +98,17 @@ class Task extends StatelessWidget {
 
   Widget _buildFilesListView(BuildContext context, int index) {
     final file = taskMetadata.taskSettings.files[index];
-    final color = file.errorMessage != null
-        ? const Color.fromRGBO(255, 17, 0, 0.456)
-        : null;
-    final filename = '${file.errorMessage ?? ''}${file.platformFile.path!}';
+    Color? color;
+    if (file.messageType == MessageType.error) {
+      color = const Color.fromRGBO(255, 17, 0, 0.456);
+    }
+    if (file.messageType == MessageType.warning) {
+      color = const Color.fromARGB(116, 255, 140, 0);
+    }
+    String filename = file.platformFile.path!;
+    if (file.messageType != null && file.message != null) {
+      filename = '$filename -> ${file.message}';
+    }
     return Card(
       color: color,
       child: Text(filename),

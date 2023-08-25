@@ -1,8 +1,11 @@
 import 'package:file_picker/file_picker.dart';
 
+enum MessageType { warning, error, info }
+
 class FileMetadata {
-  FileMetadata({required this.platformFile, this.errorMessage});
+  FileMetadata({required this.platformFile, this.message, this.messageType});
 
   final PlatformFile platformFile;
-  String? errorMessage;
+  String? message;
+  MessageType? messageType;
 }
