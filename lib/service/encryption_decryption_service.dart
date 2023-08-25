@@ -48,7 +48,6 @@ class EncryptionDecryptionService {
       String password, final bool isDeleteOriginalFiles) async {
     try {
       final String extension = path.extension(file.platformFile.path!);
-      print(extension);
       if ('.${algorithm.name}' == extension) {
         // skipping
         file.message = "file already encrypted with the same algorithm";
