@@ -50,7 +50,8 @@ class EncryptionDecryptionService {
       final String extension = path.extension(file.platformFile.path!);
       if ('.${algorithm.name}' == extension) {
         // skipping
-        file.message = "file already encrypted with the same algorithm";
+        file.message =
+            "File already encrypted with the same algorithm. Skipped.";
         file.messageType = MessageType.warning;
         return;
       }
