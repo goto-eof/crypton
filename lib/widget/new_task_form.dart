@@ -19,7 +19,7 @@ class _FormNewDialogState extends State<NewTaskForm> {
   TS.Action _action = TS.Action.encrypt;
   List<FileMetadata> _files = [];
   TS.Algorithm _algorithm = TS.Algorithm.aes;
-
+  bool _isDeleteOriginalFilesOnCompletion = false;
   final _passwordController = TextEditingController();
 
   @override
@@ -68,14 +68,14 @@ class _FormNewDialogState extends State<NewTaskForm> {
       showDialog(context: context, builder: _validationFormErrorDialogBuilder);
       return;
     }
-    final String _newPassword =
+    final String newPassword =
         _calculatePassword(_algorithm, _passwordController.text);
     widget.runNewTask(TS.TaskSettings(
-      action: _action,
-      algorithm: _algorithm,
-      files: _files,
-      password: _newPassword,
-    ));
+        action: _action,
+        algorithm: _algorithm,
+        files: _files,
+        password: newPassword,
+        isDeleteOriginalFilesOnCompletion: _isDeleteOriginalFilesOnCompletion));
     Navigator.of(context).pop();
   }
 
@@ -108,209 +108,231 @@ class _FormNewDialogState extends State<NewTaskForm> {
             child: const Text("Cancel")),
         OutlinedButton(onPressed: _submit, child: const Text("Add Task"))
       ],
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const Text("Add new encryption/decryption task."),
-          const SizedBox(
-            height: 20,
-          ),
-          const Row(
-            children: [
-              Text(
-                "1 - Select an operation:",
-                textAlign: TextAlign.left,
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Row(
-                children: [
-                  Radio<TS.Action>(
-                    value: TS.Action.encrypt,
-                    groupValue: _action,
-                    onChanged: (TS.Action? value) {
-                      setState(() {
-                        _action = value!;
-                      });
-                    },
-                  ),
-                  const Text("Encrypt"),
-                ],
-              ),
-              Row(
-                children: [
-                  Radio<TS.Action>(
-                    value: TS.Action.decrypt,
-                    groupValue: _action,
-                    onChanged: (TS.Action? value) {
-                      setState(() {
-                        _action = value!;
-                      });
-                    },
-                  ),
-                  const Text("Decrypt"),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 400,
-            child: Column(
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const Text("Add new encryption/decryption task."),
+            const SizedBox(
+              height: 20,
+            ),
+            const Row(
               children: [
-                const Text(
-                  "2 - Choose one or more files that you want to encrypt/decrypt",
+                Text(
+                  "1 - Select an operation:",
+                  textAlign: TextAlign.left,
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      height: 100,
-                      width: 380,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              width: 1,
-                              color: const Color.fromARGB(255, 0, 0, 0))),
-                      child: ListView(
-                        children: _files.isEmpty
-                            ? [
-                                Container(
-                                    alignment: Alignment.center,
-                                    child: const Text(
-                                      "No file selected",
-                                      style: TextStyle(
-                                          color: Color.fromARGB(105, 0, 0, 0)),
-                                    ))
-                              ]
-                            : [
-                                ..._files
-                                    .where((element) =>
-                                        element.platformFile.path != null)
-                                    .map(
-                                      (fileMetadata) => Card(
-                                        child: Text(
-                                          fileMetadata.platformFile.name,
-                                        ),
-                                      ),
-                                    ),
-                              ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () {
-                        _chooseFile();
+                    Radio<TS.Action>(
+                      value: TS.Action.encrypt,
+                      groupValue: _action,
+                      onChanged: (TS.Action? value) {
+                        setState(() {
+                          _action = value!;
+                        });
                       },
-                      child: const Text("Choose file/s"),
                     ),
+                    const Text("Encrypt"),
                   ],
+                ),
+                Row(
+                  children: [
+                    Radio<TS.Action>(
+                      value: TS.Action.decrypt,
+                      groupValue: _action,
+                      onChanged: (TS.Action? value) {
+                        setState(() {
+                          _action = value!;
+                        });
+                      },
+                    ),
+                    const Text("Decrypt"),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              width: 400,
+              child: Column(
+                children: [
+                  const Text(
+                    "2 - Choose one or more files that you want to encrypt/decrypt",
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 100,
+                        width: 380,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                width: 1,
+                                color: const Color.fromARGB(255, 0, 0, 0))),
+                        child: ListView.builder(
+                          itemBuilder: _fileListBuilder,
+                          itemCount: _files.length,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () {
+                          _chooseFile();
+                        },
+                        child: const Text("Choose file/s"),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const Row(
+              children: [
+                Text("3 - Choose preferred Algorithm: "),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              width: 400,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  DropdownMenu<TS.Algorithm>(
+                    width: 400,
+                    initialSelection: TS.Algorithm.aes,
+                    onSelected: (TS.Algorithm? value) {
+                      // This is called when the user selects an item.
+                      setState(() {
+                        _algorithm = value!;
+                      });
+                    },
+                    dropdownMenuEntries: TS.Algorithm.values
+                        .map<DropdownMenuEntry<TS.Algorithm>>(
+                            (TS.Algorithm algorithm) {
+                      return DropdownMenuEntry<TS.Algorithm>(
+                          value: algorithm,
+                          label: algorithm.name.toUpperCase());
+                    }).toList(),
+                  ),
+                  const Spacer(),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const Row(
+              children: [
+                Text("4 - input a Password"),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              width: 400,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Password",
+                      ),
+                      maxLength: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Checkbox(
+                  value: _isDeleteOriginalFilesOnCompletion,
+                  onChanged: (value) {
+                    setState(() {
+                      _isDeleteOriginalFilesOnCompletion = value!;
+                    });
+                  },
+                ),
+                Text(
+                  "Delete original file/s on complete encryption/decryption",
+                  style: TextStyle(
+                      color: _isDeleteOriginalFilesOnCompletion
+                          ? Colors.red
+                          : null),
                 )
               ],
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Row(
-            children: [
-              Text("3 - Choose preferred Algorithm: "),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 400,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                DropdownMenu<TS.Algorithm>(
-                  width: 400,
-                  initialSelection: TS.Algorithm.aes,
-                  onSelected: (TS.Algorithm? value) {
-                    // This is called when the user selects an item.
-                    setState(() {
-                      _algorithm = value!;
-                    });
-                  },
-                  dropdownMenuEntries: TS.Algorithm.values
-                      .map<DropdownMenuEntry<TS.Algorithm>>(
-                          (TS.Algorithm algorithm) {
-                    return DropdownMenuEntry<TS.Algorithm>(
-                        value: algorithm, label: algorithm.name);
-                  }).toList(),
-                ),
-                const Spacer(),
-              ],
+            const SizedBox(
+              height: 10,
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Row(
-            children: [
-              Text("4 - input a Password"),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: 400,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  child: TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Password",
+            const SizedBox(
+              width: 400,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Text(
+                      "The author of this software is not responsible for any data loss.",
                     ),
-                    maxLength: 24,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const SizedBox(
-            width: 400,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Text(
-                    "The author of this software is not responsible for any data loss.",
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _fileListBuilder(BuildContext context, int index) {
+    if (_files.isEmpty) {
+      return Container(
+        alignment: Alignment.center,
+        child: const Text(
+          "No file selected",
+          style: TextStyle(color: Color.fromARGB(105, 0, 0, 0)),
+        ),
+      );
+    }
+    return Card(
+      child: Text(
+        _files[index].platformFile.name,
       ),
     );
   }

@@ -60,7 +60,7 @@ class _CryptonState extends State<Crypton> {
             Text(
               "Developed by Andrei Dodu.",
             ),
-            Text("Version: 0.2.0 (2023)"),
+            Text("Version: 0.3.0 (2023)"),
           ],
         ));
   }
@@ -134,7 +134,7 @@ class _CryptonState extends State<Crypton> {
         });
         return;
       }
-      if (task.status == TaskStatus.done) {
+      if (task.status == TaskStatus.done || task.status == TaskStatus.error) {
         continue;
       }
 

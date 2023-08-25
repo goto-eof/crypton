@@ -23,7 +23,7 @@ class Task extends StatelessWidget {
         decoration: isTaskDone
             ? const BoxDecoration(color: Color.fromARGB(61, 186, 184, 184))
             : null,
-        padding: const EdgeInsets.only(left: 40, right: 40),
+        padding: const EdgeInsets.only(left: 40, right: 40, bottom: 10),
         child: Column(
           children: [
             Row(
@@ -80,19 +80,10 @@ class Task extends StatelessWidget {
                             width: 1,
                             color: const Color.fromARGB(66, 0, 0, 0))),
                     height: 100,
-                    child: ListView(
+                    child: ListView.builder(
                       shrinkWrap: true,
-                      children: [
-                        ...taskMetadata.taskSettings.files.map(
-                          (fileMetadata) => Card(
-                            color: fileMetadata.errorMessage != null
-                                ? const Color.fromRGBO(255, 17, 0, 0.456)
-                                : null,
-                            child: Text(
-                                '${fileMetadata.errorMessage ?? ''}${fileMetadata.platformFile.path!}'),
-                          ),
-                        ),
-                      ],
+                      itemBuilder: _buildFilesListView,
+                      itemCount: taskMetadata.taskSettings.files.length,
                     ),
                   ),
                 )
@@ -101,6 +92,18 @@ class Task extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildFilesListView(BuildContext context, int index) {
+    final file = taskMetadata.taskSettings.files[index];
+    final color = file.errorMessage != null
+        ? const Color.fromRGBO(255, 17, 0, 0.456)
+        : null;
+    final filename = '${file.errorMessage ?? ''}${file.platformFile.path!}';
+    return Card(
+      color: color,
+      child: Text(filename),
     );
   }
 
