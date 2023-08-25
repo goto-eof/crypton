@@ -191,15 +191,24 @@ class _CryptonState extends State<Crypton> {
       appBar: AppBar(
         actions: [
           tasks.isNotEmpty
-              ? OutlinedButton(
-                  onPressed: () {
-                    setState(
-                      () {
-                        tasks = [];
+              ? Container(
+                  padding: const EdgeInsets.all(10),
+                  child: OutlinedButton(
+                      style: const ButtonStyle(
+                          foregroundColor:
+                              MaterialStatePropertyAll(Colors.white),
+                          side: MaterialStatePropertyAll(BorderSide(
+                              width: 1.0,
+                              color: Color.fromARGB(255, 255, 255, 255)))),
+                      onPressed: () {
+                        setState(
+                          () {
+                            tasks = [];
+                          },
+                        );
                       },
-                    );
-                  },
-                  child: const Text("Clear all tasks"))
+                      child: const Text("Clear all tasks")),
+                )
               : const SizedBox(),
           IconButton(
             onPressed: () {
