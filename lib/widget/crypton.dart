@@ -197,7 +197,7 @@ class _CryptonState extends State<Crypton> {
                       tasks = [];
                     });
                   },
-                  child: const Text("Clear task list"))
+                  child: const Text("Clear all tasks"))
               : const SizedBox(),
           IconButton(
             onPressed: () {
