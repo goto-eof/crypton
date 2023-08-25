@@ -190,6 +190,15 @@ class _CryptonState extends State<Crypton> {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          tasks.isNotEmpty
+              ? OutlinedButton(
+                  onPressed: () {
+                    setState(() {
+                      tasks = [];
+                    });
+                  },
+                  child: const Text("Clear task list"))
+              : const SizedBox(),
           IconButton(
             onPressed: () {
               showDialog(
@@ -240,15 +249,9 @@ class _CryptonState extends State<Crypton> {
             : Column(
                 children: [
                   Expanded(
-                    child: ListView(
-                      children: [
-                        ...tasks.map(
-                          (task) => Task(
-                              taskMetadata: task,
-                              delete: _delete,
-                              isProcessingStarted: _isProcessingStarted),
-                        ),
-                      ],
+                    child: ListView.builder(
+                      itemBuilder: _taskListBuilder,
+                      itemCount: tasks.length,
                     ),
                   ),
                   Container(
@@ -262,6 +265,13 @@ class _CryptonState extends State<Crypton> {
               ),
       ),
     );
+  }
+
+  Widget _taskListBuilder(BuildContext context, int index) {
+    return Task(
+        taskMetadata: tasks[index],
+        delete: _delete,
+        isProcessingStarted: _isProcessingStarted);
   }
 
   Widget _retrieveActionButton() {
