@@ -4,6 +4,8 @@ import 'package:crypton/widget/new_task_form.dart';
 import 'package:crypton/widget/task.dart';
 import 'package:crypton/model/task_metadata.dart';
 import 'package:flutter/material.dart';
+import 'package:crypton/widget/about_dialog.dart' as ToDoListAboutDialog;
+import 'package:package_info_plus/package_info_plus.dart';
 
 class Crypton extends StatefulWidget {
   const Crypton({super.key});
@@ -20,6 +22,18 @@ class _CryptonState extends State<Crypton> {
 
   bool _isProcessingStarted = false;
   bool _forceStop = false;
+
+  PackageInfo? packageInfo;
+
+  Future<void> _initInstances() async {
+    packageInfo ??= await PackageInfo.fromPlatform();
+  }
+
+  @override
+  void initState() {
+    _initInstances();
+    super.initState();
+  }
 
   void _showNewTaskForm() {
     showGeneralDialog(
@@ -43,26 +57,14 @@ class _CryptonState extends State<Crypton> {
   }
 
   Widget _aboutDialogBuilder(BuildContext context) {
-    return AlertDialog(
-        actions: [
-          OutlinedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text(
-              "Ok",
-            ),
-          ),
-        ],
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Developed by Andrei Dodu.",
-            ),
-            Text("Version: 0.3.0 (2023)"),
-          ],
-        ));
+    return ToDoListAboutDialog.AboutDialog(
+      applicationName: "Crypton",
+      applicationSnapName: "crypton",
+      applicationIcon: Image.asset("assets/images/icon-48.png"),
+      applicationVersion: packageInfo!.version,
+      applicationLegalese: "MIT",
+      applicationDeveloper: "Andrei Dodu",
+    );
   }
 
   Widget _alertNoTaskDialogBuilder(BuildContext context) {
