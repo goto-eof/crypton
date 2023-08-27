@@ -162,6 +162,7 @@ class _FormNewDialogState extends State<NewTaskForm> {
                       onChanged: (TS.Action? value) {
                         setState(() {
                           _action = value!;
+                          _files = [];
                         });
                       },
                     ),
@@ -173,12 +174,52 @@ class _FormNewDialogState extends State<NewTaskForm> {
             const SizedBox(
               height: 10,
             ),
+            const Row(
+              children: [
+                Text("2 - Choose preferred Algorithm: "),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              width: 400,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  DropdownMenu<TS.Algorithm>(
+                    width: 400,
+                    initialSelection: TS.Algorithm.aes,
+                    onSelected: (TS.Algorithm? value) {
+                      // This is called when the user selects an item.
+                      setState(() {
+                        _algorithm = value!;
+                        if (_action == TS.Action.decrypt) {
+                          _files = [];
+                        }
+                      });
+                    },
+                    dropdownMenuEntries: TS.Algorithm.values
+                        .map<DropdownMenuEntry<TS.Algorithm>>(
+                            (TS.Algorithm algorithm) {
+                      return DropdownMenuEntry<TS.Algorithm>(
+                          value: algorithm,
+                          label: algorithm.name.toUpperCase());
+                    }).toList(),
+                  ),
+                  const Spacer(),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
             SizedBox(
               width: 400,
               child: Column(
                 children: [
                   const Text(
-                    "2 - Choose one or more files that you want to encrypt/decrypt",
+                    "3 - Choose one or more files that you want to encrypt/decrypt",
                   ),
                   const SizedBox(
                     height: 10,
@@ -222,43 +263,6 @@ class _FormNewDialogState extends State<NewTaskForm> {
             ),
             const Row(
               children: [
-                Text("3 - Choose preferred Algorithm: "),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              width: 400,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  DropdownMenu<TS.Algorithm>(
-                    width: 400,
-                    initialSelection: TS.Algorithm.aes,
-                    onSelected: (TS.Algorithm? value) {
-                      // This is called when the user selects an item.
-                      setState(() {
-                        _algorithm = value!;
-                      });
-                    },
-                    dropdownMenuEntries: TS.Algorithm.values
-                        .map<DropdownMenuEntry<TS.Algorithm>>(
-                            (TS.Algorithm algorithm) {
-                      return DropdownMenuEntry<TS.Algorithm>(
-                          value: algorithm,
-                          label: algorithm.name.toUpperCase());
-                    }).toList(),
-                  ),
-                  const Spacer(),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const Row(
-              children: [
                 Text("4 - input a Password"),
               ],
             ),
@@ -290,7 +294,14 @@ class _FormNewDialogState extends State<NewTaskForm> {
             ),
             Row(
               children: [
-                Checkbox(
+                Text(
+                  "Delete original file/s on complete encryption/decryption",
+                  style: TextStyle(
+                      color: _isDeleteOriginalFilesOnCompletion
+                          ? Colors.red
+                          : null),
+                ),
+                Switch(
                   value: _isDeleteOriginalFilesOnCompletion,
                   onChanged: (value) {
                     setState(() {
@@ -298,13 +309,6 @@ class _FormNewDialogState extends State<NewTaskForm> {
                     });
                   },
                 ),
-                Text(
-                  "Delete original file/s on complete encryption/decryption",
-                  style: TextStyle(
-                      color: _isDeleteOriginalFilesOnCompletion
-                          ? Colors.red
-                          : null),
-                )
               ],
             ),
             const SizedBox(
