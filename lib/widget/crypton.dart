@@ -1,5 +1,5 @@
 import 'package:crypton/model/task_settings.dart' as TS;
-import 'package:crypton/service/encryption_decryption_service.dart';
+import 'package:crypton/service/job_executor_service.dart';
 import 'package:crypton/widget/new_task_form.dart';
 import 'package:crypton/widget/task.dart';
 import 'package:crypton/model/task_metadata.dart';
@@ -144,8 +144,8 @@ class _CryptonState extends State<Crypton> {
         task.status = TaskStatus.processing;
       });
       try {
-        await EncryptionDecryptionService.executeTaskEncryption(
-            task.taskSettings);
+        JobExecutorService jobExecutorService = JobExecutorService();
+        await jobExecutorService.executeTaskEncryption(task.taskSettings);
       } on Error catch (_) {
         setState(() {
           task.status = TaskStatus.error;
