@@ -109,6 +109,7 @@ class _FormNewDialogState extends State<NewTaskForm> {
 
   @override
   Widget build(BuildContext context) {
+    const double boxWidth = 500;
     return AlertDialog(
       actions: [
         OutlinedButton(
@@ -122,6 +123,7 @@ class _FormNewDialogState extends State<NewTaskForm> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text("Add new encryption/decryption task."),
             const SizedBox(
@@ -183,12 +185,12 @@ class _FormNewDialogState extends State<NewTaskForm> {
               height: 10,
             ),
             SizedBox(
-              width: 400,
+              width: boxWidth,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   DropdownMenu<TS.Algorithm>(
-                    width: 400,
+                    width: boxWidth,
                     initialSelection: TS.Algorithm.aes,
                     onSelected: (TS.Algorithm? value) {
                       // This is called when the user selects an item.
@@ -214,22 +216,22 @@ class _FormNewDialogState extends State<NewTaskForm> {
             const SizedBox(
               height: 10,
             ),
+            const Text(
+              "3 - Choose one or more files that you want to encrypt/decrypt",
+            ),
+            const SizedBox(
+              height: 10,
+            ),
             SizedBox(
-              width: 400,
+              width: boxWidth,
               child: Column(
                 children: [
-                  const Text(
-                    "3 - Choose one or more files that you want to encrypt/decrypt",
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
                         height: 100,
-                        width: 380,
+                        width: boxWidth,
                         decoration: BoxDecoration(
                             border: Border.all(
                                 width: 1,
@@ -270,7 +272,7 @@ class _FormNewDialogState extends State<NewTaskForm> {
               height: 10,
             ),
             SizedBox(
-              width: 400,
+              width: boxWidth,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -301,6 +303,9 @@ class _FormNewDialogState extends State<NewTaskForm> {
                           ? Colors.red
                           : null),
                 ),
+                const SizedBox(
+                  width: 60,
+                ),
                 Switch(
                   value: _isDeleteOriginalFilesOnCompletion,
                   onChanged: (value) {
@@ -315,7 +320,7 @@ class _FormNewDialogState extends State<NewTaskForm> {
               height: 10,
             ),
             const SizedBox(
-              width: 400,
+              width: boxWidth,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -335,17 +340,9 @@ class _FormNewDialogState extends State<NewTaskForm> {
   }
 
   Widget _fileListBuilder(BuildContext context, int index) {
-    if (_files.isEmpty) {
-      return Container(
-        alignment: Alignment.center,
-        child: const Text(
-          "No file selected",
-          style: TextStyle(color: Color.fromARGB(105, 0, 0, 0)),
-        ),
-      );
-    }
     return Card(
       child: Row(
+        mainAxisSize: MainAxisSize.max,
         children: [
           const SizedBox(
             width: 5,
