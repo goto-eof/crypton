@@ -137,7 +137,7 @@ class _CryptonState extends State<Crypton> {
         });
         return;
       }
-      if (task.status == TaskStatus.done || task.status == TaskStatus.error) {
+      if (task.status != TaskStatus.idle) {
         continue;
       }
 
