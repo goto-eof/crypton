@@ -305,7 +305,7 @@ class _FormNewDialogState extends State<NewTaskForm> {
                   value: _isDeleteOriginalFilesOnCompletion,
                   onChanged: (value) {
                     setState(() {
-                      _isDeleteOriginalFilesOnCompletion = value!;
+                      _isDeleteOriginalFilesOnCompletion = value;
                     });
                   },
                 ),

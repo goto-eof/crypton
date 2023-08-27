@@ -100,13 +100,13 @@ class Task extends StatelessWidget {
     final file = taskMetadata.taskSettings.files[index];
     Color? color;
     if (file.messageType == MessageType.error) {
-      color = Color.fromARGB(255, 255, 17, 0);
+      color = const Color.fromARGB(255, 255, 17, 0);
     }
     if (file.messageType == MessageType.warning) {
-      color = Color.fromARGB(255, 255, 140, 0);
+      color = const Color.fromARGB(255, 255, 140, 0);
     }
     if (file.messageType == MessageType.info) {
-      color = Color.fromARGB(255, 32, 172, 0);
+      color = const Color.fromARGB(255, 32, 172, 0);
     }
     String filename = file.platformFile.path!;
     if (file.messageType != null && file.message != null) {
