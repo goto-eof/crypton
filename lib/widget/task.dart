@@ -105,13 +105,27 @@ class Task extends StatelessWidget {
     if (file.messageType == MessageType.warning) {
       color = const Color.fromARGB(116, 255, 140, 0);
     }
+    if (file.messageType == MessageType.info) {
+      color = const Color.fromARGB(116, 47, 255, 0);
+    }
     String filename = file.platformFile.path!;
     if (file.messageType != null && file.message != null) {
       filename = '$filename -> ${file.message}';
     }
     return Card(
       color: color,
-      child: Text(filename),
+      child: Row(
+        children: [
+          const SizedBox(
+            width: 5,
+          ),
+          const Icon(Icons.file_open),
+          const SizedBox(
+            width: 5,
+          ),
+          Text(filename),
+        ],
+      ),
     );
   }
 
@@ -126,6 +140,9 @@ class Task extends StatelessWidget {
       );
     } else if (status == TaskStatus.error) {
       return const Icon(Icons.error, color: Colors.red);
+    } else if (status == TaskStatus.warning) {
+      return const Icon(Icons.warning,
+          color: Color.fromARGB(255, 244, 149, 54));
     } else if (status == TaskStatus.done) {
       return const Icon(
         Icons.done,

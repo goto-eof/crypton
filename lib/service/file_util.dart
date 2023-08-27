@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:crypton/model/task_settings.dart';
+
 final RegExp regExp = RegExp(r'.*(?=\.)');
 
 class FileUtil {
@@ -22,5 +24,9 @@ class FileUtil {
 
   static String removeLastFileNameExtension(String filePathAndName) {
     return regExp.firstMatch(filePathAndName)![0]!;
+  }
+
+  static String calculateFileExtension(Algorithm algorithm) {
+    return algorithm.name;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:crypton/model/file_metadata.dart';
 import 'package:crypton/model/task_settings.dart' as TS;
 import 'package:crypton/service/job_executor_service.dart';
 import 'package:crypton/widget/new_task_form.dart';
@@ -156,9 +157,13 @@ class _CryptonState extends State<Crypton> {
         () {
           task.taskSettings.files = [...task.taskSettings.files];
           if (task.taskSettings.files
-              .where((element) => element.message != null)
+              .where((element) => element.messageType == MessageType.error)
               .isNotEmpty) {
             task.status = TaskStatus.error;
+          } else if (task.taskSettings.files
+              .where((element) => element.messageType == MessageType.warning)
+              .isNotEmpty) {
+            task.status = TaskStatus.warning;
           } else {
             task.status = TaskStatus.done;
           }

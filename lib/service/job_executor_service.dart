@@ -45,10 +45,26 @@ class JobExecutorService {
           fileMetadata.platformFile.path!, algorithm, password);
       await deleteOriginalFileIfNecessary(
           isDeleteOriginalFiles, fileMetadata.platformFile.path!);
+      updateFileMetadataToDone(fileMetadata);
     } on InvalidPasswordException catch (_) {
-      fileMetadata.message = "Invalid algorithm or password?";
-      fileMetadata.messageType = MessageType.error;
+      updateFileMetadataToError(fileMetadata);
     }
+  }
+
+  void updateFileMetadataToError(FileMetadata fileMetadata) {
+    fileMetadata.message = "Invalid algorithm or password?";
+    fileMetadata.messageType = MessageType.error;
+  }
+
+  void updateFileMetadataToDone(FileMetadata fileMetadata) {
+    fileMetadata.messageType = MessageType.info;
+    fileMetadata.message = "done";
+  }
+
+  void updateFileMetadataToWarning(FileMetadata fileMetadata) {
+    fileMetadata.message =
+        "File already encrypted with the same algorithm. Skipped.";
+    fileMetadata.messageType = MessageType.warning;
   }
 
   Future<void> deleteOriginalFileIfNecessary(
@@ -68,13 +84,11 @@ class JobExecutorService {
           fileMetadata.platformFile.path!, algorithm, password);
       await deleteOriginalFileIfNecessary(
           isDeleteOriginalFiles, fileMetadata.platformFile.path!);
+      updateFileMetadataToDone(fileMetadata);
     } on InvalidPasswordException catch (_) {
-      fileMetadata.message = "Invalid password or algorithm?";
-      fileMetadata.messageType = MessageType.error;
+      updateFileMetadataToError(fileMetadata);
     } on FileAlreadyEncryptedException catch (_) {
-      fileMetadata.message =
-          "File already encrypted with the same algorithm. Skipped.";
-      fileMetadata.messageType = MessageType.warning;
+      updateFileMetadataToWarning(fileMetadata);
     }
   }
 }

@@ -7,7 +7,6 @@ import 'package:crypton/service/strategies/encryption/encryption_fernet_strategy
 import 'package:crypton/service/strategies/encryption/encryption_salsa_strategy.dart';
 import 'package:crypton/service/strategies/encryption/encryption_strategy.dart';
 import 'package:crypton/service/strategies/encryption/encryption_util.dart';
-import 'package:crypton/service/strategies/strategies_util.dart';
 
 final List<EncryptionStrategy> encryptionStrategies = [
   EncryptionAesStrategy(),
@@ -25,7 +24,7 @@ class FileEncryptionService {
     Uint8List encryptedData = await retrieveStrategy(algorithm)
         .encryptData(algorithm, bytesToEncrypt, password);
     final String fileToSavePathAndName =
-        "$filePathAndName.${StrategiesUtils.calculateFileExtension(algorithm)}";
+        "$filePathAndName.${FileUtil.calculateFileExtension(algorithm)}";
     await FileUtil.writeOnFile(fileToSavePathAndName, encryptedData);
   }
 

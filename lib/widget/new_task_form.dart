@@ -52,11 +52,21 @@ class _FormNewDialogState extends State<NewTaskForm> {
   }
 
   void _chooseFile() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowMultiple: true);
+    FilePickerResult? result;
+    if (_action == TS.Action.decrypt) {
+      result = await FilePicker.platform.pickFiles(
+          allowMultiple: true,
+          type: FileType.custom,
+          allowedExtensions: [_algorithm.name]);
+    }
+    if (_action == TS.Action.encrypt) {
+      result = await FilePicker.platform
+          .pickFiles(allowMultiple: true, type: FileType.any);
+    }
+
     if (result != null) {
       setState(() {
-        _files = result.files
+        _files = result!.files
             .map((platformFile) => FileMetadata(platformFile: platformFile))
             .toList();
       });
@@ -331,8 +341,19 @@ class _FormNewDialogState extends State<NewTaskForm> {
       );
     }
     return Card(
-      child: Text(
-        _files[index].platformFile.name,
+      child: Row(
+        children: [
+          const SizedBox(
+            width: 5,
+          ),
+          const Icon(Icons.file_open),
+          const SizedBox(
+            width: 5,
+          ),
+          Text(
+            _files[index].platformFile.name,
+          ),
+        ],
       ),
     );
   }
