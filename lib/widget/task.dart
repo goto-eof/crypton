@@ -1,6 +1,7 @@
 import 'package:crypton/model/file_metadata.dart';
 import 'package:crypton/model/task_metadata.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Task extends StatelessWidget {
   Task(
@@ -30,8 +31,8 @@ class Task extends StatelessWidget {
             Row(
               children: [
                 SizedBox(
-                  width: 16,
-                  height: 16,
+                  width: 24,
+                  height: 24,
                   child: _calculateStatusIcon(taskMetadata.status),
                 ),
                 const SizedBox(
@@ -48,11 +49,19 @@ class Task extends StatelessWidget {
                   taskMetadata.taskSettings.algorithm.name.toUpperCase(),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text("${taskMetadata.taskSettings.files.length} file(s)"),
                 const Spacer(),
                 Row(
                   children: [
-                    const Icon(Icons.watch_outlined),
-                    Text(dateTime.toIso8601String())
+                    const Icon(Icons.watch_later_outlined),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                        "${DateFormat.yMMMd().format(dateTime)} ${DateFormat.Hms().format(dateTime)}")
                   ],
                 ),
                 const SizedBox(

@@ -48,11 +48,18 @@ class JobExecutorService {
       updateFileMetadataToDone(fileMetadata);
     } on InvalidPasswordException catch (_) {
       updateFileMetadataToError(fileMetadata);
+    } catch (err) {
+      updateFileMetadataToError(fileMetadata, errMessage: "Unknown error");
     }
   }
 
-  void updateFileMetadataToError(FileMetadata fileMetadata) {
+  void updateFileMetadataToError(FileMetadata fileMetadata,
+      {String? errMessage}) {
     fileMetadata.message = "Invalid algorithm or password?";
+
+    if (errMessage != null) {
+      fileMetadata.message = errMessage;
+    }
     fileMetadata.messageType = MessageType.error;
   }
 
@@ -89,6 +96,8 @@ class JobExecutorService {
       updateFileMetadataToError(fileMetadata);
     } on FileAlreadyEncryptedException catch (_) {
       updateFileMetadataToWarning(fileMetadata);
+    } catch (err) {
+      updateFileMetadataToError(fileMetadata, errMessage: "Unknown error");
     }
   }
 }
