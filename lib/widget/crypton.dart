@@ -81,7 +81,7 @@ class _CryptonState extends State<Crypton> {
         ),
       ],
       content: const Text(
-        "Please first define a task",
+        "Please first define a task (tasks already processed will not be re-executed)",
       ),
     );
   }
@@ -187,7 +187,10 @@ class _CryptonState extends State<Crypton> {
     });
     showDialog(
         context: context,
-        builder: tasks.isEmpty
+        builder: tasks.isEmpty ||
+                tasks
+                    .where((element) => element.status == TaskStatus.idle)
+                    .isEmpty
             ? _alertNoTaskDialogBuilder
             : _alertRunTaskDialogBuilder);
   }
